@@ -1,0 +1,321 @@
+name: UserScript Manager
+'on':
+  push:
+    paths:
+      - '**.user.js'
+      - .github/workflows/**
+  pull_request:
+    paths:
+      - '**.user.js'
+  workflow_dispatch: null
+  schedule:
+    - cron: 0 0 * * *
+env:
+  NODE_VERSION: '20'
+  USERJS_DIR: UserJs
+jobs:
+  process-js:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: '${{ secrets.GITHUB_TOKEN }}'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '${{ env.NODE_VERSION }}'
+      - name: Cache dependencies
+        uses: actions/cache@v4.1.2
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: '${{ runner.os }}-node-${{ hashFiles(''**/package-lock.json'') }}'
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Set current date
+        id: date
+        run: >
+          echo "CURRENT_DATE=$(TZ='Asia/Ho_Chi_Minh' date +'%Y-%m-%d %H:%M:%S
+          (GMT+7)')" >> $GITHUB_ENV
+      - name: Get contributors
+        id: contributors
+        run: >
+          contributors=$(gh api repos/${{ github.repository }}/contributors --jq
+          'map({login: .login, avatar_url: .avatar_url, contributions:
+          .contributions})')
+
+          echo "CONTRIBUTORS=$contributors" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      - name: Process JavaScript files
+        id: process
+        env:
+          GITHUB_REPOSITORY: '${{ github.repository }}'
+        run: >
+          mkdir -p "${{ env.USERJS_DIR }}"
+
+
+          process_script() {
+            local file="$1"
+            local filename=$(basename "$file")
+            local base="${filename%.user.js}"
+            local target_dir="${{ env.USERJS_DIR }}"
+            
+            echo "Processing $filename..."
+            
+            # Extract and validate metadata
+            meta_block=$(awk '/\/\/ ==UserScript==/{p=1;print;next}/\/\/ ==\/UserScript==/{p=0;print;exit}p{print}' "$file")
+            
+            # Validate required fields
+            for field in "name" "description" "version" "author" "namespace"; do
+              if ! echo "$meta_block" | grep -q "@$field"; then
+                echo "::error::Missing required @$field in $file"
+                return 1
+              fi
+            done
+            
+            # Prioritize English metadata by removing language-specific tags
+            meta_block=$(echo "$meta_block" | grep -v "^// @name:.*$" | grep -v "^// @description:.*$")
+            
+            # Update metadata URLs
+            meta_block=$(echo "$meta_block" | sed -E "
+              s|^// @downloadURL .*|// @downloadURL https://github.com/$GITHUB_REPOSITORY/raw/main/$target_dir/${base}.user.js|
+              s|^// @updateURL .*|// @updateURL https://github.com/$GITHUB_REPOSITORY/raw/main/$target_dir/${base}.meta.js|
+              s|^// @supportURL .*|// @supportURL https://github.com/$GITHUB_REPOSITORY/issues|
+              s|^// @homepageURL .*|// @homepageURL https://github.com/$GITHUB_REPOSITORY|
+            ")
+
+            # Generate files
+            {
+              echo "$meta_block"
+              awk '/\/\/ ==\/UserScript==/{p=1;next}p{print}' "$file"
+            } > "$target_dir/${base}.user.js"
+            
+            echo "$meta_block" > "$target_dir/${base}.meta.js"
+            git rm -f "$file"
+            
+            echo "✓ Processed: $filename"
+            return 0
+          }
+
+
+          # Process all userscripts
+
+          find . -name "*.user.js" -not -path "./${{ env.USERJS_DIR }}/*"
+          -print0 |
+
+          while IFS= read -r -d '' file; do
+            if ! process_script "$file"; then
+              exit 1
+            fi
+          done
+
+
+          echo "processed_count=$(find "${{ env.USERJS_DIR }}" -name "*.user.js"
+          | wc -l)" >> $GITHUB_OUTPUT
+      - name: Generate index.html
+        if: steps.process.outputs.processed_count > 0
+        run: >
+          get_metadata() {
+            local field="$1"
+            local file="$2"
+            grep -m 1 "^// @${field}[[:space:]]*[^:]" "$file" | sed "s|^// @${field}[[:space:]]*||"
+          }
+
+
+          cat > index.html << EOL
+
+          <!DOCTYPE html>
+
+          <html lang="en">
+
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>UserScript Collection</title>
+              <script src="https://cdn.tailwindcss.com"></script>
+              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+              <script>
+                tailwind.config = {
+                  theme: {
+                    extend: {
+                      colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b',
+                        accent: '#f59e0b'
+                      },
+                      animation: {
+                        'bounce-slow': 'bounce 3s linear infinite',
+                      }
+                    }
+                  },
+                  darkMode: 'class'
+                }
+              </script>
+          </head>
+
+          <body class="bg-gradient-to-br from-gray-50 to-gray-100
+          dark:from-gray-900 dark:to-gray-800 min-h-screen">
+              <div class="container mx-auto px-4 py-8 max-w-6xl">
+                  <header class="text-center mb-12">
+                      <div class="flex justify-center mb-6">
+                          <div class="bg-white dark:bg-gray-800 rounded-full p-6 shadow-lg animate-bounce-slow">
+                              <i class="fas fa-box-open text-5xl text-accent"></i>
+                          </div>
+                      </div>
+                      <h1 class="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent mb-4">
+                          UserScript Collection
+                      </h1>
+                      <p class="text-gray-600 dark:text-gray-300 text-lg mb-6">
+                          Enhance your browsing experience with our curated scripts
+                      </p>
+                      <div class="flex justify-center gap-4 mb-6 flex-wrap">
+                          <div class="bg-gradient-to-r from-primary to-primary/80 text-white px-6 py-3 rounded-lg shadow-lg">
+                              <i class="fas fa-scroll mr-2"></i>
+                              <span class="font-semibold">Scripts: ${{ steps.process.outputs.processed_count }}</span>
+                          </div>
+                          <div class="bg-gradient-to-r from-secondary to-secondary/80 text-white px-6 py-3 rounded-lg shadow-lg">
+                              <i class="fas fa-clock mr-2"></i>
+                              <span class="font-semibold">Updated: ${{ env.CURRENT_DATE }}</span>
+                          </div>
+                      </div>
+                  </header>
+
+                  <section class="mb-12">
+                      <div class="flex items-center justify-center mb-6">
+                          <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-200">
+                              <i class="fas fa-users mr-3 text-accent"></i>Contributors
+                          </h2>
+                      </div>
+                      <div class="flex flex-wrap justify-center gap-6 bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg">
+          EOL
+
+
+          # Add contributors
+
+          echo '${{ steps.contributors.outputs.CONTRIBUTORS }}' | jq -r '.[] |
+          "<div class=\"relative group transform hover:scale-110
+          transition-transform duration-300\"><a
+          href=\"https://github.com/\(.login)\" class=\"block\"
+          target=\"_blank\" rel=\"noopener noreferrer\" title=\"\(.login)
+          (\(.contributions) contributions)\"><img src=\"\(.avatar_url)\"
+          class=\"w-16 h-16 rounded-full ring-4 ring-primary/30 shadow-xl\"
+          alt=\"\(.login)\" loading=\"lazy\" /><div class=\"absolute -bottom-2
+          left-1/2 transform -translate-x-1/2 bg-accent text-white text-xs px-3
+          py-1 rounded-full shadow-lg\"><i class=\"fas fa-code-commit
+          mr-1\"></i>\(.contributions)</div></a></div>"' >> index.html || true
+
+
+          cat >> index.html << EOL
+                      </div>
+                  </section>
+
+                  <section class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          EOL
+
+
+          find "${{ env.USERJS_DIR }}" -name "*.user.js" -print0 | sort -z |
+
+          while IFS= read -r -d '' file; do
+            name=$(get_metadata "name" "$file")
+            version=$(get_metadata "version" "$file")
+            desc=$(get_metadata "description" "$file")
+            author=$(get_metadata "author" "$file")
+            base=$(basename "$file")
+            
+            [ -z "$name" ] || [ -z "$version" ] || [ -z "$desc" ] || [ -z "$author" ] && continue
+            
+            cat >> index.html << EOL
+                      <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                          <div class="p-6">
+                              <div class="space-y-4">
+                                  <div class="flex items-center justify-between">
+                                      <h3 class="text-2xl font-bold text-gray-900 dark:text-white">${name}</h3>
+                                      <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-semibold">
+                                          v${version}
+                                      </span>
+                                  </div>
+                                  <div class="flex items-center text-gray-500 dark:text-gray-400">
+                                      <i class="fas fa-user-edit mr-2"></i>
+                                      <span>${author}</span>
+                                  </div>
+                                  <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                                      ${desc}
+                                  </p>
+                              </div>
+                          </div>
+                          <div class="grid grid-cols-2 gap-2 p-4 bg-gray-50 dark:bg-gray-700/50">
+                              <a href="https://github.com/${{ github.repository }}/raw/main/${{ env.USERJS_DIR }}/${base}" 
+                                 class="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 text-white px-4 py-3 rounded-lg hover:shadow-md transition-all duration-300"
+                                 target="_blank" rel="noopener noreferrer">
+                                 <i class="fas fa-download"></i>
+                                 <span class="font-semibold">Install</span>
+                              </a>
+                              <a href="https://github.com/${{ github.repository }}/blob/main/${{ env.USERJS_DIR }}/${base}" 
+                                 class="flex items-center justify-center gap-2 bg-gradient-to-r from-secondary to-secondary/80 text-white px-4 py-3 rounded-lg hover:shadow-md transition-all duration-300"
+                                 target="_blank" rel="noopener noreferrer">
+                                 <i class="fas fa-code"></i>
+                                 <span class="font-semibold">Source</span>
+                              </a>
+                          </div>
+                      </article>
+          EOL
+
+          done
+
+
+          cat >> index.html << EOL
+                  </section>
+
+                  <footer class="mt-16 text-center">
+                      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                          <p class="text-gray-600 dark:text-gray-300">
+                              <i class="fas fa-scale-balanced mr-2 text-accent"></i>
+                              Distributed under GPL 3.0 License
+                          </p>
+                          <p class="mt-3 text-gray-500 dark:text-gray-400">
+                              <i class="fas fa-clock mr-2"></i>
+                              Last updated: ${{ env.CURRENT_DATE }}
+                          </p>
+                      </div>
+                  </footer>
+              </div>
+              
+              <script>
+                // Check system dark mode preference
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                  document.documentElement.classList.add('dark')
+                }
+
+                // Add dark mode toggle
+                const darkModeToggle = document.createElement('button');
+                darkModeToggle.classList.add(
+                  'fixed', 'bottom-4', 'right-4',
+                  'bg-white', 'dark:bg-gray-800',
+                  'text-gray-800', 'dark:text-white',
+                  'p-3', 'rounded-full', 'shadow-lg',
+                  'hover:shadow-xl', 'transition-all', 'duration-300'
+                );
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                darkModeToggle.addEventListener('click', () => {
+                  document.documentElement.classList.toggle('dark');
+                  darkModeToggle.innerHTML = document.documentElement.classList.contains('dark') 
+                    ? '<i class="fas fa-sun"></i>' 
+                    : '<i class="fas fa-moon"></i>';
+                });
+                document.body.appendChild(darkModeToggle);
+              </script>
+          </body>
+
+          </html>
+
+          EOL
+      - name: Commit changes
+        if: steps.process.outputs.processed_count > 0
+        run: "git config --local user.email \"github-actions[bot]@users.noreply.github.com\"\ngit config --local user.name \"github-actions[bot]\"\n\ngit add \"${{ env.USERJS_DIR }}/\" index.html\ngit add -A\n\ngit commit -m \"\U0001F4E6 Update UserScripts\n\nStats:\n- Processed: ${{ steps.process.outputs.processed_count }} scripts\n- Updated: ${{ env.CURRENT_DATE }}\n\nChanges:\n- ✨ Updated metadata and URLs\n- \U0001F465 Updated contributor information\n- \U0001F310 Generated index.html\"\n\ngit push\n"
