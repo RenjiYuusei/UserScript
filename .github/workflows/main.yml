@@ -123,7 +123,7 @@ jobs:
 
             - name: Generate index.html
               if: steps.process.outputs.processed_count > 0
-              run: >
+              run: |
                   get_metadata() {
                     local field="$1"
                     local file="$2"
