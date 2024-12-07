@@ -1,16 +1,8 @@
 // ==UserScript==
 // @name         Pixiv Downloader
-// @name:en      Pixiv Downloader (Illustration/Manga)
-// @name:ja      Pixiv Downloader (イラスト/漫画)
-// @name:zh-cn   Pixiv Downloader (插画/漫画)
-// @name:vi      Pixiv Downloader (Hình minh họa/Truyện tranh)
 // @namespace    http://tampermonkey.net/
 // @version      2.3.0
 // @description  Tải xuống hình ảnh và truyện tranh từ Pixiv
-// @description:en Download illustrations and manga from Pixiv
-// @description:ja Pixivからイラストと漫画をダウンロード
-// @description:zh-cn 从Pixiv下载插画和漫画
-// @description:vi Tải xuống hình minh họa và truyện tranh từ Pixiv
 // @match        https://www.pixiv.net/en/artworks/*
 // @match        https://www.pixiv.net/users/*
 // @author       RenjiYuusei
@@ -28,8 +20,8 @@
 // @connect      pixiv.net
 // @connect      pximg.net
 // @noframes
-// @downloadURL https://update.greasyfork.org/scripts/519859/Pixiv%20Downloader.user.js
-// @updateURL https://update.greasyfork.org/scripts/519859/Pixiv%20Downloader.meta.js
+// @downloadURL https://github.com/RenjiYuusei/UserScript/raw/main/UserJs/Pixiv Downloader.user.js
+// @updateURL https://github.com/RenjiYuusei/UserScript/raw/main/UserJs/Pixiv Downloader.meta.js
 // ==/UserScript==
 
 (function () {
