@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UserScript Collection</title>
+    <meta name="description" content="A collection of useful userscripts to enhance your web browsing experience">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
@@ -12,40 +15,63 @@
           extend: {
             colors: {
               primary: '#3b82f6',
-              secondary: '#64748b',
+              secondary: '#64748b', 
               accent: '#f59e0b'
             },
             animation: {
               'bounce-slow': 'bounce 3s linear infinite',
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'float': 'float 6s ease-in-out infinite'
             }
-          }
-        },
-        darkMode: 'class'
-      }
+          },
+          darkMode: 'class'
+        }
     </script>
+    <style>
+      @keyframes gradient {
+        0% { background-position
+        : 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0px); }
+      }
+      .gradient-animate {
+        background: linear-gradient(-45deg, #3b82f6, #f59e0b, #3b82f6);
+        background-size: 200% 200%;
+        animation: gradient 15s ease infinite;
+      }
+      .float {
+        animation: float 6s ease-in-out infinite;
+      }
+    </style>
 </head>
+
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <header class="text-center mb-12">
             <div class="flex justify-center mb-6">
-                <div class="bg-white dark:bg-gray-800 rounded-full p-6 shadow-lg animate-bounce-slow">
-                    <i class="fas fa-box-open text-5xl text-accent"></i>
+                <div class="gradient-animate rounded-full p-6 shadow-lg float">
+                    <i class="fas fa-box-open text-5xl text-white"></i>
                 </div>
             </div>
             <h1 class="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent mb-4">
                 UserScript Collection
             </h1>
             <p class="text-gray-600 dark:text-gray-300 text-lg mb-6">
-                Enhance your browsing experience with our curated scripts
+                Enhance your web browsing experience with carefully selected scripts
             </p>
             <div class="flex justify-center gap-4 mb-6 flex-wrap">
-                <div class="bg-gradient-to-r from-primary to-primary/80 text-white px-6 py-3 rounded-lg shadow-lg">
+                <div class="bg-gradient-to-r from-primary to-primary/80 text-white px-6 py-3 rounded-lg shadow-lg animate-pulse-slow">
                     <i class="fas fa-scroll mr-2"></i>
                     <span class="font-semibold">Scripts: 1</span>
                 </div>
                 <div class="bg-gradient-to-r from-secondary to-secondary/80 text-white px-6 py-3 rounded-lg shadow-lg">
                     <i class="fas fa-clock mr-2"></i>
-                    <span class="font-semibold">Updated: 2024-12-07 07:51:02 (GMT+7)</span>
+                    <span class="font-semibold">Updated: 2024-12-07 08:50:12 (GMT+7)</span>
                 </div>
             </div>
         </header>
@@ -57,19 +83,40 @@
                 </h2>
             </div>
             <div class="flex flex-wrap justify-center gap-6 bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg">
-<div class="relative group transform hover:scale-110 transition-transform duration-300"><a href="https://github.com/github-actions[bot]" class="block" target="_blank" rel="noopener noreferrer" title="github-actions[bot] (31 contributions)"><img src="https://avatars.githubusercontent.com/in/15368?v=4" class="w-16 h-16 rounded-full ring-4 ring-primary/30 shadow-xl" alt="github-actions[bot]" loading="lazy" /><div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-accent text-white text-xs px-3 py-1 rounded-full shadow-lg"><i class="fas fa-code-commit mr-1"></i>31</div></a></div>
-<div class="relative group transform hover:scale-110 transition-transform duration-300"><a href="https://github.com/RenjiYuusei" class="block" target="_blank" rel="noopener noreferrer" title="RenjiYuusei (8 contributions)"><img src="https://avatars.githubusercontent.com/u/166010224?v=4" class="w-16 h-16 rounded-full ring-4 ring-primary/30 shadow-xl" alt="RenjiYuusei" loading="lazy" /><div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-accent text-white text-xs px-3 py-1 rounded-full shadow-lg"><i class="fas fa-code-commit mr-1"></i>8</div></a></div>
-<div class="relative group transform hover:scale-110 transition-transform duration-300"><a href="https://github.com/fossabot" class="block" target="_blank" rel="noopener noreferrer" title="fossabot (1 contributions)"><img src="https://avatars.githubusercontent.com/u/29791463?v=4" class="w-16 h-16 rounded-full ring-4 ring-primary/30 shadow-xl" alt="fossabot" loading="lazy" /><div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-accent text-white text-xs px-3 py-1 rounded-full shadow-lg"><i class="fas fa-code-commit mr-1"></i>1</div></a></div>
+<div class="relative group transform hover:scale-110 transition-transform duration-300">
+  <a href="https://github.com/apps/github-actions" class="block" target="_blank" rel="noopener noreferrer" title="github-actions[bot] (32 contributions)">
+    <img src="https://avatars.githubusercontent.com/in/15368?v=4" class="w-16 h-16 rounded-full ring-4 ring-primary/30 shadow-xl group-hover:ring-accent/50 transition-all duration-300" alt="github-actions[bot]" loading="lazy" />
+    <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-accent text-white text-xs px-3 py-1 rounded-full shadow-lg group-hover:bg-primary transition-colors duration-300">
+      <i class="fas fa-code-commit mr-1"></i>32
+    </div>
+  </a>
+</div>
+<div class="relative group transform hover:scale-110 transition-transform duration-300">
+  <a href="https://github.com/RenjiYuusei" class="block" target="_blank" rel="noopener noreferrer" title="RenjiYuusei (11 contributions)">
+    <img src="https://avatars.githubusercontent.com/u/166010224?v=4" class="w-16 h-16 rounded-full ring-4 ring-primary/30 shadow-xl group-hover:ring-accent/50 transition-all duration-300" alt="RenjiYuusei" loading="lazy" />
+    <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-accent text-white text-xs px-3 py-1 rounded-full shadow-lg group-hover:bg-primary transition-colors duration-300">
+      <i class="fas fa-code-commit mr-1"></i>11
+    </div>
+  </a>
+</div>
+<div class="relative group transform hover:scale-110 transition-transform duration-300">
+  <a href="https://github.com/fossabot" class="block" target="_blank" rel="noopener noreferrer" title="fossabot (1 contributions)">
+    <img src="https://avatars.githubusercontent.com/u/29791463?v=4" class="w-16 h-16 rounded-full ring-4 ring-primary/30 shadow-xl group-hover:ring-accent/50 transition-all duration-300" alt="fossabot" loading="lazy" />
+    <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-accent text-white text-xs px-3 py-1 rounded-full shadow-lg group-hover:bg-primary transition-colors duration-300">
+      <i class="fas fa-code-commit mr-1"></i>1
+    </div>
+  </a>
+</div>
             </div>
         </section>
 
         <section class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
                 <div class="p-6">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Selection and Copying Restorer (Universal)</h3>
-                            <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-semibold">
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors duration-300">Selection and Copying Restorer (Universal)</h3>
+                            <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-semibold group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
                                 v1.21.0.2
                             </span>
                         </div>
@@ -83,21 +130,56 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2 p-4 bg-gray-50 dark:bg-gray-700/50">
-                    <a href="https://github.com/RenjiYuusei/UserScript/raw/main/UserJs/Selection and Copying Restorer (Universal).user.js" 
-                       class="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 text-white px-4 py-3 rounded-lg hover:shadow-md transition-all duration-300"
-                       target="_blank" rel="noopener noreferrer">
-                       <i class="fas fa-download"></i>
-                       <span class="font-semibold">Install</span>
-                    </a>
-                    <a href="https://github.com/RenjiYuusei/UserScript/blob/main/UserJs/Selection and Copying Restorer (Universal).user.js" 
-                       class="flex items-center justify-center gap-2 bg-gradient-to-r from-secondary to-secondary/80 text-white px-4 py-3 rounded-lg hover:shadow-md transition-all duration-300"
-                       target="_blank" rel="noopener noreferrer">
-                       <i class="fas fa-code"></i>
-                       <span class="font-semibold">Source</span>
-                    </a>
+                    <div class="flex flex-col gap-2">
+                        <a href="https://github.com/RenjiYuusei/UserScript/raw/main/UserJs/Selection and Copying Restorer (Universal).user.js" 
+                           class="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 text-white px-4 py-3 rounded-lg hover:shadow-md transition-all duration-300 hover:from-accent hover:to-accent/80 hover:scale-105"
+                           target="_blank" rel="noopener noreferrer">
+                           <i class="fas fa-download"></i>
+                           <span class="font-semibold">Install</span>
+                        </a>
+                        <a href="https://github.com/RenjiYuusei/UserScript/raw/main/UserJs/Selection and Copying Restorer (Universal).min.user.js" 
+                           class="flex items-center justify-center gap-2 bg-gradient-to-r from-accent to-accent/80 text-white px-4 py-3 rounded-lg hover:shadow-md transition-all duration-300 hover:from-primary hover:to-primary/80 hover:scale-105"
+                           target="_blank" rel="noopener noreferrer">
+                           <i class="fas fa-compress-alt"></i>
+                           <span class="font-semibold">Minified</span>
+                        </a>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <a href="https://github.com/RenjiYuusei/UserScript/blob/main/UserJs/Selection and Copying Restorer (Universal).user.js" 
+                           class="flex items-center justify-center gap-2 bg-gradient-to-r from-secondary to-secondary/80 text-white px-4 py-3 rounded-lg hover:shadow-md transition-all duration-300 hover:from-primary hover:to-primary/80 hover:scale-105"
+                           target="_blank" rel="noopener noreferrer">
+                           <i class="fas fa-code"></i>
+                           <span class="font-semibold">Source code</span>
+                        </a>
+                        <button onclick="compareCode('UserJs/Selection and Copying Restorer (Universal).user.js', 'UserJs/Selection and Copying Restorer (Universal).min.user.js')"
+                                class="flex items-center justify-center gap-2 bg-gradient-to-r from-gray-600 to-gray-500 text-white px-4 py-3 rounded-lg hover:shadow-md transition-all duration-300 hover:from-primary hover:to-primary/80 hover:scale-105">
+                           <i class="fas fa-columns"></i>
+                           <span class="font-semibold">Compare</span>
+                        </button>
+                    </div>
                 </div>
             </article>
         </section>
+
+        <!-- Modal compare code -->
+        <div id="compareModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+            <div class="bg-white dark:bg-gray-800 w-11/12 h-5/6 rounded-xl p-6 relative overflow-hidden">
+                <button onclick="closeCompareModal()" class="absolute top-4 right-4 text-gray-500 hover:text-red-500">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Compare source code</h3>
+                <div class="grid grid-cols-2 gap-4 h-[calc(100%-4rem)] overflow-hidden">
+                    <div class="overflow-auto">
+                        <h4 class="font-semibold mb-2 text-primary">Original code</h4>
+                        <pre id="originalCode" class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"></pre>
+                    </div>
+                    <div class="overflow-auto">
+                        <h4 class="font-semibold mb-2 text-accent">Minified code</h4>
+                        <pre id="minifiedCode" class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg text-sm overflow-x-auto"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <footer class="mt-16 text-center">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
@@ -107,26 +189,27 @@
                 </p>
                 <p class="mt-3 text-gray-500 dark:text-gray-400">
                     <i class="fas fa-clock mr-2"></i>
-                    Last updated: 2024-12-07 07:51:02 (GMT+7)
+                    Last updated: 2024-12-07 08:50:12 (GMT+7)
                 </p>
             </div>
         </footer>
     </div>
     
     <script>
-      // Check system dark mode preference
+      // Check system dark mode
       if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.documentElement.classList.add('dark')
       }
 
-      // Add dark mode toggle
+      // Add dark mode toggle with effect
       const darkModeToggle = document.createElement('button');
       darkModeToggle.classList.add(
         'fixed', 'bottom-4', 'right-4',
         'bg-white', 'dark:bg-gray-800',
         'text-gray-800', 'dark:text-white',
         'p-3', 'rounded-full', 'shadow-lg',
-        'hover:shadow-xl', 'transition-all', 'duration-300'
+        'hover:shadow-xl', 'transition-all', 'duration-300',
+        'hover:rotate-12', 'hover:scale-110'
       );
       darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
       darkModeToggle.addEventListener('click', () => {
@@ -136,6 +219,45 @@
           : '<i class="fas fa-moon"></i>';
       });
       document.body.appendChild(darkModeToggle);
+
+      // Process code comparison modal
+      const compareModal = document.getElementById('compareModal');
+      const originalCode = document.getElementById('originalCode');
+      const minifiedCode = document.getElementById('minifiedCode');
+
+      async function compareCode(originalPath, minifiedPath) {
+        try {
+          const [originalRes, minifiedRes] = await Promise.all([
+            fetch('https://raw.githubusercontent.com/RenjiYuusei/UserScript/main/' + originalPath),
+            fetch('https://raw.githubusercontent.com/RenjiYuusei/UserScript/main/' + minifiedPath)
+          ]);
+          
+          const [originalText, minifiedText] = await Promise.all([
+            originalRes.text(),
+            minifiedRes.text()
+          ]);
+
+          originalCode.textContent = originalText;
+          minifiedCode.textContent = minifiedText;
+          compareModal.style.display = 'flex';
+        } catch (error) {
+          console.error('Error loading code:', error);
+        }
+      }
+
+      function closeCompareModal() {
+        compareModal.style.display = 'none';
+      }
+
+      // Add smooth scroll effect
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+          });
+        });
+      });
     </script>
 </body>
 </html>
