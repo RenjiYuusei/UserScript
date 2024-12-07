@@ -60,11 +60,11 @@ jobs:
         id: process
         env:
           GITHUB_REPOSITORY: '${{ github.repository }}'
-        run: >
+        run: |
           mkdir -p "${{ env.USERJS_DIR }}"
 
           # Improve script processing function
-          process_script() {
+          function process_script() {
             local file="$1"
             local filename=$(basename "$file")
             local base="${filename%.user.js}"
